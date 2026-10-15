@@ -30,8 +30,8 @@ int main()
     ao();	//stop
     msleep(lpause);	//wait 0.4 sec
     followall(); 
-   	ao();
-  	wave();
+    ao();	//stop
+    wave();  //wave 6 times 
         
     return 0;
 }
