@@ -1,0 +1,86 @@
+#include <kipr/wombat.h>
+//DECLARE FUNCTIONS
+void forward();
+void Lshimmie();
+void turn();
+void Rshimmie();
+void followall(); 
+void wave();
+//DECLARE VARIABLES
+int lmotor=2;	//port motor in port 2
+int rmotor=0;	//starboard motor in port 0
+int midspeed=15;	//midspeed = 15% power
+int hspeed=25;	//highspeed = 25% power 
+int lspeed=10;	//lowpeed = 10% power
+int tspeed=95;	//turningspeed = 95% power
+int fronteye=2;	//forward sensor in port 2
+int downeye=5;	//down sensor in port 5
+int counter=0;	//counter = 0
+int servoport=3;	//servor port is inport 3
+int lpause=400;	//pause for 0.4 sec
+int spause=300;	//duration for 0.3 sec
+int frmotorspeed=35;	//forward rignt motor power =35%
+int flmotorspeed=55;	//froward left motor power = 55%
+int main()
+{
+   	while(analog(downeye) <=4068)	//while the robot is off the line
+    {
+        forward();
+    }
+    ao();	//stop
+    msleep(lpause);	//wait 0.4 sec
+    followall(); 
+   	ao();
+  	wave();
+        
+    return 0;
+}
+
+void forward()
+{
+    motor(rmotor,frmotorspeed); 	//starboard motor 35% power
+    motor(lmotor,flmotorspeed); 	//port motor 55% power
+}
+        
+void Lshimmie()
+{
+    motor(rmotor, hspeed);	//starboard motor 25%
+    motor(lmotor, midspeed);	//port motor 15%
+}
+
+void Rshimmie()
+{
+    motor(rmotor, lspeed);	//starboard motor 10%
+    motor(lmotor, tspeed);	//port motor 95%
+    
+}
+        
+void followall()
+{
+     while(analog(fronteye) < 2800)	//while the robot is farther than 2800 from the wall
+    {
+         printf("fronteye=%d\n",analog(fronteye));	//print the postion away from the wall
+        if(analog(downeye) >= 4075)	//while the down sensor is on the line
+        {
+            Rshimmie();	//move to the right
+        }
+        if(analog(downeye) <= 4068)	//while the down sensor is off the line
+        {
+         	Lshimmie();	//move to the left
+          }
+        
+    }
+}
+void wave()
+{
+    while(counter<6)	//if the servo has waved less than 6 times
+    {
+    enable_servos(); //all servos on
+    set_servo_position(servoport, 250);	//servo position 250
+    msleep(spause);	//duration 0.3 sec
+    set_servo_position(servoport, 1700); //servo position 1700
+    msleep(spause);	//duration 0.3 sec
+    disable_servos();	//all servos off
+    counter=counter+1;	//add one to the counter 
+    }
+    }
